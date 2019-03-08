@@ -4,10 +4,25 @@ var visitingHours = ['6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3
 
 var pikeStreet  = { 
   locationName: 'Pike Street',
-  minCustomers: Math.random(10,20), 
-  maxCustomers: Math.random(21,30), 
-  avgCookies: 10
+  minCustomers: 23, 
+  maxCustomers: 65, 
+  avgCookies: 6.3
 };
+
+//Adding constuctor for a location
+
+function locationDtls (name,city,zip) {
+  this.locationName=name;
+  this.locationCity=city;
+  this.locationZip=zip;
+}
+
+var pikeSt = new locationDtls("Pike Street","Seattle","98021");
+var seaTac = new locationDtls("SeaTacAirport","SeaTac",'98052');
+console.log(pikeSt.locationName);
+console.log(pikeSt.locationCity);
+console.log(pikeSt.locationCity);
+
 
 var pikeStreetResults = [];
 var pikeStreetHourlyTotals = [];
@@ -54,8 +69,4 @@ for (var k = 0; k < pikeStreetHourlyTotals.length; k++) {
   // 3. Append the new element to its parent in the DOM
   pikeList.appendChild(liEl);
 }
-
-
-
-
 
