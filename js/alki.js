@@ -3,24 +3,12 @@
 var visitingHours = ['6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM'];
 
 var alki  = {
-  locationName: 'Pike Street',
-  minCustomers: 23,
-  maxCustomers: 65,
-  avgCookies: 6.3
+  locationName: 'Alki',
+  minCustomers: 2,
+  maxCustomers: 16,
+  avgCookies: 4.6
 };
 
-//Adding constuctor for a location
-
-function locationDtls (name,city,zip) {
-  this.locationName=name;
-  this.locationCity=city;
-  this.locationZip=zip;
-}
-
-var alki = new locationDtls("Alki Beach","West Seattle",'98010');
-console.log(alki.locationName);
-console.log(alki.locationCity);
-console.log(alki.locationCity);
 
 
 var alkiResults = [];
