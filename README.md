@@ -1,0 +1,1 @@
+Initial project created with static variables
