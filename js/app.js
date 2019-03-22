@@ -1,59 +1,128 @@
 'use strict';
 
-var visitingHours = ['6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM'];
+var hours = ['6:00AM', '7:00AM', '8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM', '7:00PM', '8:00PM'];
+var locations = [];
+var headerData = [];
 
-var pikeStreet  = { 
-  locationName: '1st and Pike',
-  minCustomers: 23, 
-  maxCustomers: 65, 
-  avgCookies: 6.3
+
+var tableHeaderId = document.getElementById('headerHours');
+var tableBodyId = document.getElementById('cookieContents');
+
+function SalesProjector(locationName, minimumHourlyCustomer, maximumHourlyCustomer, averageCookiesPerCustomer) {
+    this.locationName = locationName;
+    this.minimumHourlyCustomer = minimumHourlyCustomer;
+    this.maximumHourlyCustomer = maximumHourlyCustomer;
+    this.averageCookiesPerCustomer = averageCookiesPerCustomer;    
+  }
+
+  SalesProjector.prototype.customersPerHour = function () {
+        var min = Math.ceil(this.minimumHourlyCustomer);
+        var max = Math.floor(this.maximumHourlyCustomer);        
+        return Math.floor(Math.random() * (max - min)) + min;
+  };
+
+  SalesProjector.prototype.cookiesList = function () {
+    var hourlyCookiesList = [];
+    for (var i = 0; i < hours.length; i++) {    
+        var hourlyCookie = Math.floor(this.customersPerHour() * this.averageCookiesPerCustomer);    
+        hourlyCookiesList.push(hourlyCookie);
+        }    
+        return hourlyCookiesList;      
+  };
+
+  SalesProjector.prototype.totalCookiesPerDay = function () {
+    var cookiesCount = 0;      
+    for (var i = 0; i < this.cookiesList().length; i++) {                            
+        cookiesCount = cookiesCount + this.cookiesList()[i];
+    }
+    return cookiesCount;
 };
 
+var pikeSales = new SalesProjector('pike', 23, 65, 6.3);
+var seaTac = new SalesProjector('seaTac', 3, 24, 1.2);
+var seattleCenter = new SalesProjector('seattleCenter', 11, 38, 3.7);
+var capitolHill = new SalesProjector('capitolHill', 20, 38, 2.3);
+var alki = new SalesProjector('alki', 2, 16, 4.6);
+
+locations.push(pikeSales, seaTac, seattleCenter, capitolHill, alki);
 
 
-var pikeStreetResults = [];
-var pikeStreetHourlyTotals = [];
-for (var i=0;i<visitingHours.length;i++){
-  //alert('try');
-  pikeStreetResults[i] = Math.round(Math.random() * (30 - 1) + 1);
-  pikeStreetHourlyTotals[i] = visitingHours[i] +': ' + pikeStreetResults[i] + ' cookies' ;
-}
-var totalCookies = 0;
-//var avgCookies;
+writeHeaderRow(hours);
+var grandTotalContent = writeBodyRow(locations);
+writeTotalRow(locations);
+//alert(rowHeaderContent);
 
+
+function writeHeaderRow(arr) {
+    var headerRow = document.createElement('tr');
+    var headerContent ='<td>' + '</td>';
+    for (var i=0; i < arr.length; i++) {     
+        headerContent = headerContent + '<td>' + arr[i]+ '</td>' 
+        
+    }  
+    headerContent = headerContent +  '<td> Daily Location Total </td>' ;
+    headerRow.innerHTML = headerContent
+    tableHeaderId.appendChild(headerRow);
+  }
+
+  function writeBodyRow(arr) {    
+    var grandTotal = 0;
+    var grandTotalContent = 0;
+    for (var i=0; i < arr.length; i++) {
+        var bodyData = [];        
+          for (var j=0; j < arr[i].cookiesList().length; j++) {
+            if(j===0) {
+                bodyData.push('<td>' + arr[i].locationName + '</td>')
+            }
+            var tempCookieCount = arr[i].cookiesList()[j];           
+            bodyData.push(
+                '<td>' + tempCookieCount + '</td>'
+                )
+          } 
+          var tempTotal = arr[i].totalCookiesPerDay();
+          grandTotal = grandTotal + tempTotal;
+          bodyData.push('<td>' + tempTotal + '</td>' );                 
+          render(bodyData, tableBodyId);
+    }
+    
+    grandTotalContent = '<td>' + grandTotal + '</td>';         
+     return grandTotalContent;    
+  }
+
+  function writeTotalRow(arr) {
+    var totalRow = document.createElement('tr');
+   
+    var totalContent ='<td>' +'Totals'+ '</td>';
+    var first = arr[0].cookiesList()[0];
+    var second = arr[1].cookiesList()[0];
+    var third = arr[2].cookiesList()[0];
+    var fourth = arr[3].cookiesList()[0];
+    var fifth = arr[4].cookiesList()[0];
+    //alert( first + second + third + fourth + fifth);
+
+    for (var i=0; i < hours.length; i++) { 
+        var cookieCount = 0;
+        cookieCount = cookieCount + arr[0].cookiesList()[i] + 
+                                    arr[1].cookiesList()[i] + 
+                                    arr[2].cookiesList()[i] + 
+                                    arr[3].cookiesList()[i] + 
+                                    arr[4].cookiesList()[i]
+        totalContent = totalContent + '<td>' + cookieCount + '</td>' 
+      
+    }   
+    totalContent = totalContent + grandTotalContent;
+    totalRow.innerHTML = totalContent;
+    tableBodyId.appendChild(totalRow);
+
+  }
 
   
-function avgCookiesPerHour() {
- 
-  for (var i=0;i<visitingHours.length;i++){
-    totalCookies =  totalCookies + pikeStreetResults[i];
+  function render(tableRow, elementId) {      
+    var bodyRow = document.createElement('tr');
+    var bodyContent ='';
+    for (var j=0; j < tableRow.length; j++) { 
+        bodyContent = bodyContent +  tableRow[j];        
+    }
+    bodyRow.innerHTML = bodyContent;
+    elementId.appendChild(bodyRow);
   }
-  // avgCookies = totalCookies / (visitingHours.length - 1);
-  return totalCookies / (visitingHours.length - 1);
-}
-
-//alert('Min ' + Math.min.apply(null,pikeStreetResults));
-
-//alert(' Randon ' + Math.round(Math.random(10,20)) * 12);
-pikeStreet.minCustomers = Math.min.apply(null,pikeStreetResults);
-pikeStreet.maxCustomers = Math.max.apply(null,pikeStreetResults);
-pikeStreet.avgCookies = Math.round(avgCookiesPerHour());
-
-//alert('Reults :' + pikeStreet);
-console.log('Reults :' + pikeStreet.avgCookies);
-console.log('Reults2 :' + pikeStreet.minCustomers);
-console.log('Reults3 :' + pikeStreet.maxCustomers);
-console.log('try ' + pikeStreetHourlyTotals);
-
-
-var pikeList = document.getElementById('pike-list');
-
-for (var k = 0; k < pikeStreetHourlyTotals.length; k++) {
-  // 1. Create new element
-  var liEl = document.createElement('li');
-  // 2. Give the element some content
-  liEl.textContent = pikeStreetHourlyTotals[k];
-  // 3. Append the new element to its parent in the DOM
-  pikeList.appendChild(liEl);
-}
-
