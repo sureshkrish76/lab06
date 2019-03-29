@@ -153,7 +153,7 @@ function addNewStore(event) {
     return alert('That\'s not how numbers work, nerd.');
   }
 
- 
+
   for (var i = 0; i < allLocations.length; i++){
     if (newStoreName === allLocations[i].location) {
       allLocations[i].minCustomers = addMinCustomers;
